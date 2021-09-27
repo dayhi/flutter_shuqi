@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
+import 'package:flutter_statusbar_manager/flutter_statusbar_manager.dart';
 
 import 'package:shuqi/public.dart';
 
@@ -53,18 +54,19 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
 
   @override
   void didPop() {
-    SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top, SystemUiOverlay.bottom]);
+    FlutterStatusbarManager.setFullscreen(false);
   }
 
   @override
   void dispose() {
     pageController.dispose();
     routeObserver.unsubscribe(this);
+    FlutterStatusbarManager.setFullscreen(false);
     super.dispose();
   }
 
   void setup() async {
-    await SystemChrome.setEnabledSystemUIOverlays([]);
+    FlutterStatusbarManager.setFullscreen(true);
     // 不延迟的话，安卓获取到的topSafeHeight是错的。
     await Future.delayed(const Duration(milliseconds: 100), () {});
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
@@ -97,7 +99,8 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       pageIndex = currentArticle.pageCount - 1;
     }
     if (jumpType != PageJumpType.stay) {
-      pageController.jumpToPage((preArticle != null ? preArticle.pageCount : 0) + pageIndex);
+      pageController.jumpToPage(
+          (preArticle != null ? preArticle.pageCount : 0) + pageIndex);
     }
 
     setState(() {});
@@ -106,7 +109,8 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   onScroll() {
     var page = pageController.offset / Screen.width;
 
-    var nextArtilePage = currentArticle.pageCount + (preArticle != null ? preArticle.pageCount : 0);
+    var nextArtilePage = currentArticle.pageCount +
+        (preArticle != null ? preArticle.pageCount : 0);
     if (page >= nextArtilePage) {
       print('到达下个章节了');
 
@@ -154,9 +158,15 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
 
   Future<Article> fetchArticle(int articleId) async {
     var article = await ArticleProvider.fetchArticle(articleId);
-    var contentHeight = Screen.height - topSafeHeight - ReaderUtils.topOffset - Screen.bottomSafeHeight - ReaderUtils.bottomOffset - 20;
+    var contentHeight = Screen.height -
+        topSafeHeight -
+        ReaderUtils.topOffset -
+        Screen.bottomSafeHeight -
+        ReaderUtils.bottomOffset -
+        25;
     var contentWidth = Screen.width - 15 - 10;
-    article.pageOffsets = ReaderPageAgent.getPageOffsets(article.content, contentHeight, contentWidth, ReaderConfig.instance.fontSize);
+    article.pageOffsets = ReaderPageAgent.getPageOffsets(article.content,
+        contentHeight, contentWidth, ReaderConfig.instance.fontSize);
 
     return article;
   }
@@ -164,7 +174,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   onTap(Offset position) async {
     double xRate = position.dx / Screen.width;
     if (xRate > 0.33 && xRate < 0.66) {
-      SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.top, SystemUiOverlay.bottom]);
+      FlutterStatusbarManager.setFullscreen(false);
       setState(() {
         isMenuVisiable = true;
       });
@@ -189,15 +199,18 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       Toast.show('已经是第一页了');
       return;
     }
-    pageController.previousPage(duration: Duration(milliseconds: 250), curve: Curves.easeOut);
+    pageController.previousPage(
+        duration: Duration(milliseconds: 250), curve: Curves.easeOut);
   }
 
   nextPage() {
-    if (pageIndex >= currentArticle.pageCount - 1 && currentArticle.nextArticleId == 0) {
+    if (pageIndex >= currentArticle.pageCount - 1 &&
+        currentArticle.nextArticleId == 0) {
       Toast.show('已经是最后一页了');
       return;
     }
-    pageController.nextPage(duration: Duration(milliseconds: 250), curve: Curves.easeOut);
+    pageController.nextPage(
+        duration: Duration(milliseconds: 250), curve: Curves.easeOut);
   }
 
   Widget buildPage(BuildContext context, int index) {
@@ -219,7 +232,8 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       onTapUp: (TapUpDetails details) {
         onTap(details.globalPosition);
       },
-      child: ReaderView(article: article, page: page, topSafeHeight: topSafeHeight),
+      child: ReaderView(
+          article: article, page: page, topSafeHeight: topSafeHeight),
     );
   }
 
@@ -228,7 +242,9 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
       return Container();
     }
 
-    int itemCount = (preArticle != null ? preArticle.pageCount : 0) + currentArticle.pageCount + (nextArticle != null ? nextArticle.pageCount : 0);
+    int itemCount = (preArticle != null ? preArticle.pageCount : 0) +
+        currentArticle.pageCount +
+        (nextArticle != null ? nextArticle.pageCount : 0);
     return PageView.builder(
       physics: BouncingScrollPhysics(),
       controller: pageController,
@@ -259,7 +275,7 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
   }
 
   hideMenu() {
-    SystemChrome.setEnabledSystemUIOverlays([]);
+    FlutterStatusbarManager.setFullscreen(true);
     setState(() {
       this.isMenuVisiable = false;
     });
@@ -272,11 +288,16 @@ class ReaderSceneState extends State<ReaderScene> with RouteAware {
     }
 
     return Scaffold(
-      body: AnnotatedRegion(
+      body: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle.dark,
         child: Stack(
           children: <Widget>[
-            Positioned(left: 0, top: 0, right: 0, bottom: 0, child: Image.asset('img/read_bg.png', fit: BoxFit.cover)),
+            Positioned(
+                left: 0,
+                top: 0,
+                right: 0,
+                bottom: 0,
+                child: Image.asset('img/read_bg.png', fit: BoxFit.cover)),
             buildPageView(),
             buildMenu(),
           ],
