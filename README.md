@@ -1,23 +1,5 @@
 # 高仿书旗小说 Flutter 版
 
-[简书](https://www.jianshu.com/p/aed5e319b313)
-
-##  screen shot for iOS
-
-<img src="https://github.com/huanxsd/flutter_shuqi/blob/master/screenshot/ios_0.png">
-
-<img src="https://github.com/huanxsd/flutter_shuqi/blob/master/screenshot/ios_1.png">
-
-<img src="https://github.com/huanxsd/flutter_shuqi/blob/master/screenshot/ios_2.png">
-
-## screen shot for Android
-
-<img src="https://github.com/huanxsd/flutter_shuqi/blob/master/screenshot/android_0.png">
-
-<img src="https://github.com/huanxsd/flutter_shuqi/blob/master/screenshot/android_1.png">
-
-<img src="https://github.com/huanxsd/flutter_shuqi/blob/master/screenshot/android_2.png">
-
 ## Setup
 
 1. **Clone the repo**
