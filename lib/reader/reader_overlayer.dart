@@ -17,19 +17,30 @@ class ReaderOverlayer extends StatelessWidget {
     var time = format.format(DateTime.now());
 
     return Container(
-      padding: EdgeInsets.fromLTRB(15, 10 + topSafeHeight, 15, 10 + Screen.bottomSafeHeight),
+      padding: EdgeInsets.fromLTRB(15, 15, 15, 10 + Screen.bottomSafeHeight),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(article.title, style: TextStyle(fontSize: fixedFontSize(14), color: SQColor.golden)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(article.title,
+                  style: TextStyle(
+                      fontSize: fixedFontSize(14), color: SQColor.golden)),
+            ],
+          ),
           Expanded(child: Container()),
           Row(
             children: <Widget>[
               BatteryView(),
               SizedBox(width: 10),
-              Text(time, style: TextStyle(fontSize: fixedFontSize(11), color: SQColor.golden)),
+              Text(time,
+                  style: TextStyle(
+                      fontSize: fixedFontSize(11), color: SQColor.golden)),
               Expanded(child: Container()),
-              Text('第${page + 1}页', style: TextStyle(fontSize: fixedFontSize(11), color: SQColor.golden)),
+              Text('第${page + 1}页',
+                  style: TextStyle(
+                      fontSize: fixedFontSize(11), color: SQColor.golden)),
             ],
           ),
         ],
