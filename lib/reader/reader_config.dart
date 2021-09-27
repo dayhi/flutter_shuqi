@@ -9,5 +9,5 @@ class ReaderConfig {
   }
 
 
-  double fontSize = 20.0;
+  double fontSize = 18.0;
 }
